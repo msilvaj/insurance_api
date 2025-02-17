@@ -1,15 +1,18 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: %i[show update destroy]
+  before_action :set_client, only: [:show, :update, :destroy]
 
+  # Listar todos os clientes
   def index
     @clients = Client.all
     render json: @clients
   end
 
+  # Buscar um cliente específico
   def show
     render json: @client
   end
 
+  # Criar um novo cliente
   def create
     @client = Client.new(client_params)
     if @client.save
@@ -19,6 +22,7 @@ class ClientsController < ApplicationController
     end
   end
 
+  # Atualizar um cliente
   def update
     if @client.update(client_params)
       render json: @client
@@ -27,14 +31,18 @@ class ClientsController < ApplicationController
     end
   end
 
+  # Deletar um cliente
   def destroy
     @client.destroy
+    head :no_content
   end
 
   private
 
   def set_client
     @client = Client.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Client not found" }, status: :not_found
   end
 
   def client_params
