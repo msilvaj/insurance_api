@@ -1,3 +1,5 @@
+require 'net/http'
+
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :update, :destroy]
 
@@ -47,5 +49,14 @@ class ClientsController < ApplicationController
 
   def client_params
     params.require(:client).permit(:name, :cpf, :email)
+  end
+
+  # Buscar usuários da API externa (JSONPlaceholder)
+  def external_clients
+    url = URI("https://jsonplaceholder.typicode.com/users")
+    response = Net::HTTP.get(url)
+    clients = JSON.parse(response)
+
+    render json: clients
   end
 end
