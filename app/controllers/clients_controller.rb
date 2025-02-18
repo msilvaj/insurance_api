@@ -40,30 +40,13 @@ class ClientsController < ApplicationController
     head :no_content
   end
 
-  # Buscar usuários da API externa (JSONPlaceholder)
+  # Buscar usuários da API externa usando o service
   def external_clients
-    url = URI("https://jsonplaceholder.typicode.com/users")
-    response = Net::HTTP.get(url)
-    clients = JSON.parse(response)
-
-    formatted_clients = clients.map do |client|
-      {
-        id: client["id"],
-        name: client["name"],
-        #cpf: client["phone"],
-        email: client["email"]
-      }
-    end
-
-    # Adicionar CPF a cada cliente
-    clients_with_cpf = formatted_clients.map do |client|
-      client.merge("cpf" => CPF.generate(true)) # true para formatado (###.###.###-##)
-    end
-
-    render json: clients_with_cpf
-
+    clients = ExternalClientsService.fetch_clients
+    render json: clients
+  rescue StandardError => e
+    render json: { error: "Failed to fetch external clients: #{e.message}" }, status: :internal_server_error
   end
-
 
   private
 
