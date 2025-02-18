@@ -45,8 +45,18 @@ class ClientsController < ApplicationController
     response = Net::HTTP.get(url)
     clients = JSON.parse(response)
 
-    render json: clients
+    formatted_clients = clients.map do |client|
+      {
+        id: client["id"],
+        name: client["name"],
+        #cpf: client["phone"],
+        email: client["email"]
+      }
+    end
+
+    render json: formatted_clients
   end
+
 
   private
 
