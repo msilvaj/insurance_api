@@ -1,4 +1,5 @@
 require "net/http"
+require "cpf_cnpj"
 
 class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :update, :destroy]
@@ -54,7 +55,13 @@ class ClientsController < ApplicationController
       }
     end
 
-    render json: formatted_clients
+    # Adicionar CPF a cada cliente
+    clients_with_cpf = formatted_clients.map do |client|
+      client.merge("cpf" => CPF.generate(true)) # true para formatado (###.###.###-##)
+    end
+
+    render json: clients_with_cpf
+
   end
 
 
