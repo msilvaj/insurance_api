@@ -40,12 +40,15 @@ class ClientsController < ApplicationController
     head :no_content
   end
 
-  # Buscar usuários da API externa usando o service
+  # Buscar usuários da API externa e salvar novos no banco
   def external_clients
-    clients = ExternalClientsService.fetch_clients
-    render json: clients
-  rescue StandardError => e
-    render json: { error: "Failed to fetch external clients: #{e.message}" }, status: :internal_server_error
+    ExternalClientsService.fetch_and_store_clients
+    render json: Client.all
+  end
+
+  def client_claims
+    cpf = params[:cpf]
+    render json: ClientClaimsService.fetch_claims(cpf)
   end
 
   private
