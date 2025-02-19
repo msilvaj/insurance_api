@@ -4,4 +4,6 @@ Rails.application.routes.draw do
 
   get "/external_clients", to: "clients#external_clients"
 
+  get "/client_claims/:cpf", to: "clients#client_claims"
+
 end
